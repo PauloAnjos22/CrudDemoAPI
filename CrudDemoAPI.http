@@ -1,0 +1,31 @@
+@CrudDemoAPI_HostAddress = https://localhost:7055
+
+GET {{CrudDemoAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+POST {{CrudDemoAPI_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "Name": "Makita",
+  "Description": "A Makita é referência em ferramentas elétricas, a bateria e a combustão, atendendo diversos segmentos como construção civil, indústria automotiva e marcenarias.",
+  "Price": 8000
+}
+
+###
+
+GET {{CrudDemoAPI_HostAddress}}/api/customers
+
+###
+
+POST {{CrudDemoAPI_HostAddress}}/api/customers
+Content-Type: application/json
+
+{
+  "Name": "Paulo",
+  "Email": "pcsar.anjos@gmail.com"
+}
+
+###
