@@ -12,7 +12,7 @@ namespace CrudDemoAPI.Controllers
     {
         private readonly AppDbContext _context;
 
-        public CustomersController (AppDbContext context)
+        public CustomersController(AppDbContext context)
         {
             _context = context;
         }
@@ -21,6 +21,18 @@ namespace CrudDemoAPI.Controllers
         {
             var customers = await _context.Customers.ToListAsync();
             return Ok(customers);
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Customer>> GetCustomer(long id)
+        {
+            var customer = await _context.Customers.FindAsync(id);
+
+            if(customer == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(customer);
         }
 
         [HttpPost]
@@ -35,10 +47,53 @@ namespace CrudDemoAPI.Controllers
             {
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
-                return Ok(customer);
-                //return CreatedAtAction("GetCustomers", new { id = customer.Id }, customer);
+                //return Ok(customer);
+                return CreatedAtAction("GetCustomers", new { id = customer.Id }, customer);
             }
         }
-        
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCustomer(long id, Customer customer)
+        {
+            if(id != customer.Id)
+            {
+                return BadRequest();
+            }
+            _context.Entry(customer).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                if(!CustomerExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
+        [HttpDelete("{id}")]    
+        public async Task<IActionResult> DeleteCustomer(long id)
+        {
+            var customer = await _context.Customers.FindAsync(id);
+            if(customer == null)
+            {
+                return NotFound();
+            }
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool CustomerExists(long id)
+        {
+            return _context.Customers.Any(e => e.Id == id);
+        }
     }
 }

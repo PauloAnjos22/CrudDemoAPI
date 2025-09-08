@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrudDemoAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250901211827_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250906192532_tables")]
+    partial class tables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,11 @@ namespace CrudDemoAPI.Migrations
 
             modelBuilder.Entity("CrudDemoAPI.Entities.Customer", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -55,6 +57,9 @@ namespace CrudDemoAPI.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<long?>("CustomerId1")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -63,7 +68,7 @@ namespace CrudDemoAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerId1");
 
                     b.ToTable("Orders");
                 });
@@ -99,9 +104,7 @@ namespace CrudDemoAPI.Migrations
                 {
                     b.HasOne("CrudDemoAPI.Entities.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId1");
 
                     b.Navigation("Customer");
                 });
