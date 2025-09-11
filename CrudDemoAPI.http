@@ -19,22 +19,25 @@ Content-Type: application/json
 GET {{CrudDemoAPI_HostAddress}}/api/customers
 
 ###
-// POST
+// POST CUSTOMER
 POST {{CrudDemoAPI_HostAddress}}/api/customers
 Content-Type: application/json
 
 {
-  "Name": "Moicalvo",
-  "Email": "moicalvo@gmail.com"
+  "Name": "Indio Pereira",
+  "Email": "poatan@gmail.com",
+  "Cpf": "12345678900",
+  "Address": "Rua das Flores, 123, São Paulo, SP, 01234-567",
+  "IsBlocked": true
 }
 
 ###
-// GET by id
+// GET CUSTOMER BY ID
 @id=2
 GET {{CrudDemoAPI_HostAddress}}/api/customers/{{id}}
 
 ###
-// PUT
+// PUT CUSTOMER
 @id=2
 PUT {{CrudDemoAPI_HostAddress}}/api/customers/{{id}}
 Content-Type: application/json
@@ -44,6 +47,7 @@ Content-Type: application/json
   "Email": "moicalvo@gmail.com"
 }
 ###
+//DELETE CUSTOMER
 @id=2
 DELETE {{CrudDemoAPI_HostAddress}}/api/customers/{{id}}
 

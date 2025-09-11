@@ -1,8 +1,10 @@
 ﻿using CrudDemoAPI.Data;
 using CrudDemoAPI.Entities;
+using CrudDemoAPI.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace CrudDemoAPI.Controllers
 {
@@ -11,19 +13,22 @@ namespace CrudDemoAPI.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public CustomersController(AppDbContext context)
+        public CustomersController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
             var customers = await _context.Customers.ToListAsync();
-            return Ok(customers);
+            //_mapper.Map<Classe destino>(Objeto)
+            return Ok(_mapper.Map<IEnumerable<CustomerDTO>>(customers));
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(long id)
+        public async Task<ActionResult<CustomerDTO>> GetCustomer(long id)
         {
             var customer = await _context.Customers.FindAsync(id);
 
@@ -32,11 +37,11 @@ namespace CrudDemoAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(customer);
+            return Ok(_mapper.Map<CustomerDTO>(customer));
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> CreateCustomer(Customer customer)
+        public async Task<ActionResult<CustomerDTO>> CreateCustomer(CustomerCreateDTO customer)
         {
             var existingCustomer = await _context.Customers
                 .FirstOrDefaultAsync(c => c.Email == customer.Email);
@@ -45,15 +50,15 @@ namespace CrudDemoAPI.Controllers
                 return Conflict("Um usuário com este e-mail já existe");
             else
             {
-                _context.Customers.Add(customer);
+                var customerMapped = _mapper.Map<Customer>(customer);
+                _context.Customers.Add(customerMapped);
                 await _context.SaveChangesAsync();
-                //return Ok(customer);
-                return CreatedAtAction("GetCustomers", new { id = customer.Id }, customer);
+                return CreatedAtAction("GetCustomers", new { id = customerMapped.Id }, customerMapped);
             }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomer(long id, Customer customer)
+        public async Task<IActionResult> UpdateCustomer(long id, CustomerDTO customer)
         {
             if(id != customer.Id)
             {
@@ -77,6 +82,7 @@ namespace CrudDemoAPI.Controllers
             }
             return NoContent();
         }
+
         [HttpDelete("{id}")]    
         public async Task<IActionResult> DeleteCustomer(long id)
         {

@@ -1,11 +1,11 @@
-﻿namespace CrudDemoAPI.Entities
+﻿namespace CrudDemoAPI.DTOs
 {
-    public class Product : BaseEntity
+    public class ProductDTO : BaseDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        public int TotalInStock { get; set; } = 0;
+        public bool InStock { get; set; }
     }
 }
