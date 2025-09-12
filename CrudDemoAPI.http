@@ -38,13 +38,15 @@ GET {{CrudDemoAPI_HostAddress}}/api/customers/{{id}}
 
 ###
 // PUT CUSTOMER
-@id=2
+@id=3
 PUT {{CrudDemoAPI_HostAddress}}/api/customers/{{id}}
 Content-Type: application/json
 {
   "Id": {{id}},
-  "Name": "Moicalvo",
-  "Email": "moicalvo@gmail.com"
+  "Name": "Moicanso",
+  "Email": "moicalvo@gmail.com",
+  "Cpf": "98765432100",
+  "Address": "Avenida Paulista, 1000, São Paulo, SP, 01310-100"
 }
 ###
 //DELETE CUSTOMER

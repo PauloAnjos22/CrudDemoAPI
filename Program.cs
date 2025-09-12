@@ -2,8 +2,8 @@ using CrudDemoAPI.AutoMapper;
 using CrudDemoAPI.Data;
 using CrudDemoAPI.DTOs;
 using CrudDemoAPI.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using CrudDemoAPI.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +24,7 @@ builder.Services.AddDbContext<AppDbContext>
         )
     );
 
-builder.Services.AddScoped<ICrudService<CustomerCreateDTO, CustomerDTO>, CustomerService>();
+builder.Services.AddScoped<ICrudService<CustomerCreateDTO, CustomerUpdateDTO, CustomerDTO>, CustomerService>();
 
 var app = builder.Build();
 

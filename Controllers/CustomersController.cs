@@ -15,14 +15,16 @@ namespace CrudDemoAPI.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-        private readonly ICrudService<CustomerCreateDTO, CustomerDTO> _service;
+        private readonly ICrudService<CustomerCreateDTO, CustomerUpdateDTO, CustomerDTO> _service;
 
-        public CustomersController(AppDbContext context, IMapper mapper, ICrudService<CustomerCreateDTO, CustomerDTO> service)
+        public CustomersController(AppDbContext context, IMapper mapper, 
+            ICrudService<CustomerCreateDTO, CustomerUpdateDTO, CustomerDTO> service)
         {
             _context = context;
             _mapper = mapper;
             _service = service;
         }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
@@ -33,56 +35,40 @@ namespace CrudDemoAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerDTO>> GetCustomer(long id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _service.GetByIdAsync(id);
 
-            if(customer == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<CustomerDTO>(customer));
+            return Ok(customer);
         }
 
         [HttpPost]
         public async Task<ActionResult<CustomerDTO>> CreateCustomer(CustomerCreateDTO customer)
         {
-            var existingCustomer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.Email == customer.Email);
 
-            if (existingCustomer != null)
-                return Conflict("Um usuário com este e-mail já existe");
-            else
+            var customerResponse = await _service.CreateAsync(customer);
+            if(customerResponse == null)
             {
-                var customerMapped = _mapper.Map<Customer>(customer);
-                _context.Customers.Add(customerMapped);
-                await _context.SaveChangesAsync();
-                var customerToReturn = _mapper.Map<CustomerDTO>(customerMapped);
-                return CreatedAtAction("GetCustomers", new { id = customerToReturn.Id }, customerToReturn);
+                return Conflict("Um usuário com este e-mail já existe.");
             }
+            return CreatedAtAction("GetCustomers", new { id = customerResponse.Id }, customerResponse);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomer(long id, CustomerDTO customer)
+        public async Task<IActionResult> UpdateCustomer(long id, CustomerUpdateDTO customer)
         {
-            if(id != customer.Id)
+            var updateResult = await _service.UpdateAsync(id, customer);
+            if (!updateResult.Success)
             {
-                return BadRequest();
-            }
-            _context.Entry(customer).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch(DbUpdateConcurrencyException)
-            {
-                if(!CustomerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+               return updateResult.Message switch 
+               {
+                   "ValidationError" => BadRequest(updateResult.Message),
+                    "NotFound" => NotFound(),
+                    _ => StatusCode(500, "An unexpected error occurred")
+               };
             }
             return NoContent();
         }
@@ -90,20 +76,17 @@ namespace CrudDemoAPI.Controllers
         [HttpDelete("{id}")]    
         public async Task<IActionResult> DeleteCustomer(long id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            if(customer == null)
+            var deleteResult = await _service.DeleteAsync(id);
+            if(!deleteResult.Success)
             {
-                return NotFound();
+                return deleteResult.Message switch
+                {
+                    "NotFound" => NotFound(),
+                    _ => StatusCode(500, "An unexpected error occurred")
+                };
             }
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private bool CustomerExists(long id)
-        {
-            return _context.Customers.Any(e => e.Id == id);
-        }
     }
 }

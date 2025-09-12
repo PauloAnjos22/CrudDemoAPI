@@ -12,6 +12,8 @@ namespace CrudDemoAPI.AutoMapper
 
             CreateMap<Customer, CustomerCreateDTO>().ReverseMap();
 
+            CreateMap<Customer, CustomerUpdateDTO>().ReverseMap();
+
             CreateMap<Product, ProductDTO>().ReverseMap();
         }
     }
