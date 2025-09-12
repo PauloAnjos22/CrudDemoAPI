@@ -4,11 +4,15 @@ This is a simple CRUD project to solidify my understanding of C# syntax and ASP.
 It's a standalone module that I plan to integrate into a more complex project in the future.  
 
 ## Features
-- Create, Read, Update, Delete Customers and Products
-- Async database operations with EF Core
-- Basic HTTP responses and status codes
-- Data validation with DTOs
-- Object mapping using AutoMapper for clean separation between entities and API responses
+- **CRUD Operations**: Create, Read, Update, Delete for Customers and Products
+- **Async database operations** with Entity Framework Core
+- **DTO-based validation** to ensure clean and secure data input
+- **Object mapping with AutoMapper** for separation between entities and API responses
+- **Service Layer with ICrudService interface** for reusable CRUD logic and abstraction
+- **Dependency Injection** for services following ASP.NET Core best practices
+- **Error handling with ServiceResult** to standardize service responses (success, failure, error messages)
+- **RESTful API design** with proper HTTP status codes
+- **Separation of Concerns**: Controllers handle requests/responses, services handle business logic
 
 ## Work in Progress
 - General interface `ICrudService` for reusability across entities
