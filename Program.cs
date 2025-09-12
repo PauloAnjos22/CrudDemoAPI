@@ -1,6 +1,9 @@
 using CrudDemoAPI.AutoMapper;
 using CrudDemoAPI.Data;
+using CrudDemoAPI.DTOs;
+using CrudDemoAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using CrudDemoAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,8 @@ builder.Services.AddDbContext<AppDbContext>
             builder.Configuration.GetConnectionString("DefaultConnection")
         )
     );
+
+builder.Services.AddScoped<ICrudService<CustomerCreateDTO, CustomerDTO>, CustomerService>();
 
 var app = builder.Build();
 

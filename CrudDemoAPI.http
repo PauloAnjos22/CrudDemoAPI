@@ -24,8 +24,8 @@ POST {{CrudDemoAPI_HostAddress}}/api/customers
 Content-Type: application/json
 
 {
-  "Name": "Indio Pereira",
-  "Email": "poatan@gmail.com",
+  "Name": "Makachera",
+  "Email": "islam@email.com",
   "Cpf": "12345678900",
   "Address": "Rua das Flores, 123, São Paulo, SP, 01234-567",
   "IsBlocked": true

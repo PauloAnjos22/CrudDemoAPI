@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using CrudDemoAPI.Interfaces;
 
 namespace CrudDemoAPI.Controllers
 {
@@ -14,18 +15,20 @@ namespace CrudDemoAPI.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ICrudService<CustomerCreateDTO, CustomerDTO> _service;
 
-        public CustomersController(AppDbContext context, IMapper mapper)
+        public CustomersController(AppDbContext context, IMapper mapper, ICrudService<CustomerCreateDTO, CustomerDTO> service)
         {
             _context = context;
             _mapper = mapper;
+            _service = service;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
-            var customers = await _context.Customers.ToListAsync();
+            var customersResult = await _service.GetAllAsync();
             //_mapper.Map<Classe destino>(Objeto)
-            return Ok(_mapper.Map<IEnumerable<CustomerDTO>>(customers));
+            return Ok(customersResult);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerDTO>> GetCustomer(long id)
@@ -53,7 +56,8 @@ namespace CrudDemoAPI.Controllers
                 var customerMapped = _mapper.Map<Customer>(customer);
                 _context.Customers.Add(customerMapped);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction("GetCustomers", new { id = customerMapped.Id }, customerMapped);
+                var customerToReturn = _mapper.Map<CustomerDTO>(customerMapped);
+                return CreatedAtAction("GetCustomers", new { id = customerToReturn.Id }, customerToReturn);
             }
         }
 

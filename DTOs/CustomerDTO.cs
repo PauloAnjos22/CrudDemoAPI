@@ -1,4 +1,6 @@
-﻿namespace CrudDemoAPI.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CrudDemoAPI.DTOs
 {
     public class CustomerDTO 
     {
