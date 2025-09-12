@@ -10,6 +10,11 @@ It's a standalone module that I plan to integrate into a more complex project in
 - Data validation with DTOs
 - Object mapping using AutoMapper for clean separation between entities and API responses
 
+## Work in Progress
+- General interface `ICrudService` for reusability across entities
+- `CustomerService` implementation to move logic from controllers into services
+- `ServiceResult` pattern for structured service responses (success, error messages)
+
 ## Getting Started
 
 ### Prerequisites
