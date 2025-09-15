@@ -58,7 +58,15 @@ namespace CrudDemoAPI.Services
             {
                 return ServiceResult.Fail("ValidationError");
             }
-            _context.Entry(_mapper.Map<Customer>(CustomerDto)).State = EntityState.Modified;
+
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            if (customer == null)
+            {
+                return ServiceResult.Fail("NotFound");
+            }
+
+            _mapper.Map(CustomerDto, customer);
+            // _mapper.Map(Source, Destination)
             try
             {
                 await _context.SaveChangesAsync();
@@ -77,11 +85,6 @@ namespace CrudDemoAPI.Services
             return ServiceResult.Ok();
         }
 
-        private bool CustomerExists(long id)
-        {
-            return _context.Customers.Any(e => e.Id == id);
-        }
-
         public async Task<ServiceResult> DeleteAsync(long id)
         {
             var customer = await _context.Customers.FindAsync(id);
@@ -93,6 +96,11 @@ namespace CrudDemoAPI.Services
             await _context.SaveChangesAsync();
 
             return ServiceResult.Ok();
+        }
+
+        private bool CustomerExists(long id)
+        {
+            return _context.Customers.Any(e => e.Id == id);
         }
     }
 }
