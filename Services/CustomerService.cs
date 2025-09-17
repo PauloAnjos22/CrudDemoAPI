@@ -59,7 +59,7 @@ namespace CrudDemoAPI.Services
                 return ServiceResult.Fail("ValidationError");
             }
 
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
                 return ServiceResult.Fail("NotFound");

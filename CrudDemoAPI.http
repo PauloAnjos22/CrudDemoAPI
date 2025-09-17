@@ -43,14 +43,14 @@ PUT {{CrudDemoAPI_HostAddress}}/api/customers/{{putId}}
 Content-Type: application/json
 {
   "Id": {{putId}},
-  "Name": "Moicanso",
+  "Name": "Moicanso do canal Money Moicano",
   "Email": "moicalvo@gmail.com",
   "Cpf": "98765432100",
   "Address": "Avenida Paulista, 1000, São Paulo, SP, 01310-100"
 }
 ###
 //DELETE CUSTOMER
-@id=2
-DELETE {{CrudDemoAPI_HostAddress}}/api/customers/{{id}}
+@deleteId=11
+DELETE {{CrudDemoAPI_HostAddress}}/api/customers/{{deleteId}}
 
 ###
