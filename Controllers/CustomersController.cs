@@ -13,15 +13,10 @@ namespace CrudDemoAPI.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
         private readonly ICrudService<CustomerCreateDTO, CustomerUpdateDTO, CustomerDTO> _service;
 
-        public CustomersController(AppDbContext context, IMapper mapper, 
-            ICrudService<CustomerCreateDTO, CustomerUpdateDTO, CustomerDTO> service)
+        public CustomersController(ICrudService<CustomerCreateDTO, CustomerUpdateDTO, CustomerDTO> service)
         {
-            _context = context;
-            _mapper = mapper;
             _service = service;
         }
 
@@ -29,20 +24,19 @@ namespace CrudDemoAPI.Controllers
         public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
             var customersResult = await _service.GetAllAsync();
-            //_mapper.Map<Classe destino>(Objeto)
             return Ok(customersResult);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerDTO>> GetCustomer(long id)
         {
-            var customer = await _service.GetByIdAsync(id);
+            var result = await _service.GetByIdAsync(id);
 
-            if (customer == null)
+            if (!result.Success || result.Data == null )
             {
-                return NotFound();
+                return NotFound(result.Message);
             }
 
-            return Ok(customer);
+            return Ok(result.Data);
         }
 
         [HttpPost]

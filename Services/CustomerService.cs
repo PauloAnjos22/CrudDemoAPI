@@ -19,18 +19,23 @@ namespace CrudDemoAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<CustomerDTO>> GetAllAsync()
+        public async Task<ServiceResult<IEnumerable<CustomerDTO>>> GetAllAsync()
         {
             var customers = await _context.Customers.ToListAsync();
             //_mapper.Map<Classe destino>(Objeto)
-            return _mapper.Map<IEnumerable<CustomerDTO>>(customers);
+            var customersDto = _mapper.Map<IEnumerable<CustomerDTO>>(customers);
+            return ServiceResult<IEnumerable<CustomerDTO>>.Ok(customersDto);
         }
 
-        public async Task<CustomerDTO?> GetByIdAsync(long id)
+        public async Task<ServiceResult<CustomerDTO?>> GetByIdAsync(long id)
         {
             var customer = await _context.Customers.FindAsync(id);
-            //return customer is null ? null : _mapper.Map<CustomerDTO>(customer);
-            return _mapper.Map<CustomerDTO>(customer); // o AutoMapper já retorna null se customer for null :)
+            if(customer == null)
+            {
+                return ServiceResult<CustomerDTO?>.Fail("NotFound");
+            }
+            var customerDto = _mapper.Map<CustomerDTO>(customer);
+            return ServiceResult<CustomerDTO?>.Ok(customerDto);
         }
         public async Task<CustomerDTO?> CreateAsync(CustomerCreateDTO customerCreateDto)
         {
